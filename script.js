@@ -1,50 +1,19 @@
-let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+function calculateFinancialSummary() {
+  const salary = 10000;
+  const daysInMonth = 30;
+  const weeksInMonth = 4;
+  const monthsInYear = 12;
 
-function addExpense() {
-  const amount = document.querySelector("input[placeholder='Enter amount']").value;
-  const category = document.querySelector("select").value;
-  const description = document.querySelector("input[placeholder='Enter description']").value;
+  let totalExpense = 0;
+  expenses.forEach(exp => totalExpense += exp.amount);
 
-  if (amount === "" || isNaN(amount)) {
-    alert("Please enter a valid amount.");
-    return;
-  }
+  let dailyLimit = salary / daysInMonth;
+  let weeklyLimit = salary / weeksInMonth;
+  let monthlyBalance = salary - totalExpense;
+  let yearlyBalance = (salary * monthsInYear) - (totalExpense * monthsInYear);
 
-  const expense = {
-    amount: parseFloat(amount),
-    category,
-    description
-  };
-
-  expenses.push(expense);
-  localStorage.setItem("expenses", JSON.stringify(expenses));
-
-  displayExpenses();
-}
-
-function displayExpenses() {
-  const tableBody = document.querySelector("table tbody");
-  tableBody.innerHTML = "";
-
-  let total = 0;
-
-  expenses.forEach(exp => {
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td>$${exp.amount.toFixed(2)}</td>
-      <td>${exp.category}</td>
-      <td>${exp.description}</td>
-    `;
-
-    total += exp.amount;
-    tableBody.appendChild(row);
-  });
-
-  document.getElementById("total").textContent = `Total: $${total.toFixed(2)}`;
-}
-
-// Initial display on page load
-window.onload = () => {
-  displayExpenses();
+  document.getElementById("daily").textContent = `Daily: ₹${dailyLimit.toFixed(2)} - ₹${(totalExpense / daysInMonth).toFixed(2)} = ₹${(dailyLimit - (totalExpense / daysInMonth)).toFixed(2)} (Gain/Loss)`;
+  document.getElementById("weekly").textContent = `Weekly: ₹${weeklyLimit.toFixed(2)} - ₹${(totalExpense / weeksInMonth).toFixed(2)} = ₹${(weeklyLimit - (totalExpense / weeksInMonth)).toFixed(2)}`;
+  document.getElementById("monthly").textContent = `Monthly: ₹${salary} - ₹${totalExpense.toFixed(2)} = ₹${monthlyBalance.toFixed(2)}`;
+  document.getElementById("yearly").textContent = `Yearly: ₹${salary * monthsInYear} - ₹${(totalExpense * monthsInYear).toFixed(2)} = ₹${yearlyBalance.toFixed(2)}`;
 }
